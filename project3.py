@@ -18,42 +18,17 @@ def tfidf(tf, df, n):
 
 def tokenize(file):
 	tokens = {}
-	rootDir = file#
+	rootDir = file
 	i = 0;#
-
+	
 	for dirName, subdirList, fileList in os.walk(rootDir, topdown=False):
 		#fileList will be a list of all the files
-		for item in fileList:
-#			print(item)
-
-			with open(dirName + "\\" + item, encoding = "utf8") as f:
-					#iterate through every line in the file
-					
-					for line in f:
-						
-						words = re.split(r"[\W_]+", line)
-					#iterate through every word on the line
-						for word in words:
-							if(word != ""):
-								#if it exists decrement the pointer. It was easier to sort
-								#the words with negative values as after a sort on their values
-								#the keys are in alphabetical order
-								if(word.lower() in tokens):
-									tokens[word.lower()][0] -=1;
-									if i not in tokens[word.lower()][1]:
-										tokens[word.lower()][1][str(i)] = 1
-									else:
-										tokens[word.lower()][1][str(i)] += 1
-								else:
-									doc_dict = {str(i): 1}
-									tokens[word.lower()] = [-1, doc_dict]
-			i +=1						
-			#if i > 1:#limits first 20 docs for testing, remove when submitting
-		for term in tokens:
-				for doc_id in tokens[term][1]:
-					tokens[term][1][str(doc_id)] = tfidf(tokens[term][1][doc_id], len(tokens[term][1]), i-1)
+		temp = dirName.split("\\")
+		print(temp[len(temp)-1])
+		#for item in fileList:
 			
-		return tokens
+				
+	return tokens
 
 
 #If the file path isn't found print "File not found to console"
@@ -68,19 +43,12 @@ try:
     #most frequent words (highest value) and then alphabetically
 
 	client = pymongo.MongoClient("mongodb+srv://timothyChan:Unrealgamer%5F1@cs121-54zoj.mongodb.net/test?retryWrites=true")
-	db = client['test'] 
+	#db = client['test'] 
 	
-	testing = db.testing
+	#testing = db.testing
 	
-	for term in tokens:
-		#check keys is false to allows numbers as keys in the db
-		testing.insert_one({term : tokens[term][1]})
+	#for term in tokens:
+	#	testing.insert_one({term : tokens[term][1]})
 	
-	sorted_tokens = sorted(tokens.items(), key = lambda l: (l[1][0],l[0]))
-	#print(sorted_tokens)
-	#for x in range(len(sorted_tokens)):
-	#		sorted_tokens[x] = [sorted_tokens[x][0], sorted_tokens[x][1][0], sorted_tokens[x][1][1]]
-	#for key in sorted_tokens:
-			#print(key[0] + "\t" + str(abs(key[1])) + "\t" + str(key[2]))
 except OSError as e:
 	print("File not found")
