@@ -6,6 +6,7 @@ import sys
 import re
 import os
 import pymongo 
+from pymongo import MongoClient
 import math
 
 #Read line by line through the file and use regular expressions to split words
@@ -31,7 +32,7 @@ def tokenize(file):
 					try:
 						for line in f:
 						
-							words = re.split(r"[\W_]+", line)
+							words = re.split(r"[0-9\W_]+", line)
 					#iterate through every word on the line
 							for word in words:
 								if(word != ""):
@@ -48,10 +49,10 @@ def tokenize(file):
 					except:
 						print(line)
 					i +=1
-			#if k > 20: #limits first 20 docs for testing, remove when submitting
+			#if k > 1: #limits first 20 docs for testing, remove when submitting
 	for term in tokens:
 		for doc_id in tokens[term][1]:
-			tokens[term][1][str(doc_id)] = tfidf(tokens[term][1][doc_id], len(tokens[term][1]), k)	
+			tokens[term][1][str(doc_id)] = tfidf(tokens[term][1][doc_id], len(tokens[term][1]), k)
 	print("tokens created")
 	return tokens
 
@@ -65,7 +66,7 @@ try:
             #TODO store each tokenized word in a database with the tf-id
     #the lambda key in the sorted method call puts priority in sorting by the
     #most frequent words (highest value) and then alphabetically
-	client = pymongo.MongoClient("mongodb+srv://timothyChan:Unrealgamer%5F1@cs121-54zoj.mongodb.net/test?retryWrites=true")
+	client = MongoClient("mongodb://localhost:27017")
 	db = client['CS121'] 
 	
 	web = db.Webpages
